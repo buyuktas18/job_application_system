@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>JOBS</title>
+    <link rel="stylesheet" href="/static/jobs.css"/>
+  </head>
+  <body>
+
+    
+    
+    <div class="container1">
+      <button class="btn"
+    onclick="document.location = 'login'"> 
+        We are a company
+    </button> 
+
+    <button class="btn"
+    onclick="document.location = 'app_login'"> 
+        I am an applicant
+    </button> 
+
+    
+
+    </div>
+
+
+    <div class="tables">
+    <div class="table1">
+      <h1>Job Announccements</h1>
+    <table class="container">
+      <tr>
+        <th>Company</th>
+        <th>Job</th>
+      </tr>
+    {%for row in data%}
+        
+        <tr>
+            <td>
+                 {{row[0]}}  </a>
+            </td>
+            <td>
+              <a href="/app_login">{{row[1]}} </a>
+            </td>
+        </tr>
+    
+    {%endfor%}
+    </table>
+  </div>
+
+    <div class="table2">
+    <h1>Company Scores</h1>
+
+    <table class="container">
+      <tr>
+        <th>Company</th>
+        <th>Score</th>
+      </tr>
+    {%for row in scores%}
+        
+        <tr>
+            <td>
+                 {{row[0]}}  </a>
+            </td>
+            <td>
+              <a>{{row[1]}} </a>
+            </td>
+        </tr>
+    
+    {%endfor%}
+    </table>
+  </div>
+</div>
+  </body>
+</html>

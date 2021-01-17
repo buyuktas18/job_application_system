@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+   <h1>Your company has {{count}} announcement:</h1>
+    
+   {%for k in range(count)%}
+    <div class="tables">
+   <div class="table1">
+    <h1>{{data1[orders[k]][7]}}</h1>
+    
+  <table class="container">
+    {%if data1[orders[k]][0] != "0"%}
+    <tr>
+      <th>Applicant</th>
+     
+    </tr>
+    {%endif%}
+  
+       
+      {%for i in range(loops[k])%}
+      {%if data1[orders[k] + i][0] != "0"%}
+      <tr>
+          <td>
+          {{data1[orders[k] + i][0] + " " + data1[orders[k] + i][3]}}
+          </td>
+          <td>
+            <form action="download" method="POST">
+                <button type="submit" name="cv" value="{{data1[orders[k] + i][2]}}">Download cv</button>
+            </form>
+        </td>
+        <td >
+                <button onclick="reply(this.id)" id="{{orders[k] + i}}" value="{{orders[k] + i}}">See profile</button>
+           
+        </td>
+      </tr>
+      {%endif%}
+      {%if data1[orders[k] + i][0] == "0"%}
+        This announcement has not any applicants for now. <br>
+        You can put forward your announcement for applicants by upgrading your account to our business model.
+      {%endif%}      
+      {%endfor%}
+      
+  
+  </table>
+  {%endfor%}
+</div>
+</div>
+
+
+<!-- The Modal -->
+{%for i in range(size)%}
+<div id="{{i + size}}" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class={{i}}>&times;</span>
+    
+    <p class="demo">{{data1[i][0]}}</p>
+    <p class="demo">{{data1[i][3]}}</p>
+    <p class="demo">{{data1[i][4]}}</p>
+    <p class="demo">{{data1[i][5]}}</p>
+    
+    
+    <form action="cprofile" method="POST">
+        <input type="checkbox" name="accepted" value="{{data1[i][2]}} {{data1[i][1]}}">
+        ACCEPT
+        <input type="checkbox" name="denied" value= "{{data1[i][2]}} {{data1[i][1]}}">
+        DENY<br>
+        <button type="submit" value="responded">confirm</button>
+    </form>
+</div>
+
+</div>
+{%endfor%}
+
+
+<script>
+   var id = 0;
+   var displayed_modal;
+    
+   function reply(clicked_id){
+       id = clicked_id;
+       var size = "{{size}}"
+       var modal = document.getElementById(parseInt(id) + parseInt(size));
+       modal.style.display = "block";
+       var span = document.getElementsByClassName(id)[0];
+       span.onclick = function() {
+      modal.style.display = "none";
+      displayed_modal = modal;
+    }
+
+
+    window.onclick = function(event) {
+    alert(display_modal.id)
+      if (event.target == displayed_modal) {
+        displayed_modal.style.display = "none";
+      }
+    }
+
+   }
+    
+    
+    </script>
+   
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Create Job Announcement</title>
+    <link rel="stylesheet" href="/static/form.css"/>
+  </head>
+  <body>
+    
+      <ul>
+        <li><a href="/cprofile">Profile</a></li>
+        <li><a href = "/job_page">Create a new announcement</a></li>
+        <li><a href="/logout">Log out</a></li>
+        
+      </ul>
+    
+    
+    
+      
+    <form autocomplete="off" class="form1" action="" method="post" name="adding_app">
+      <h1>Create a new announcement</h1>
+      
+      
+      <div class="field">
+        <label for="title" class="label">Title</label>
+        <div class="control">
+          <input type="text" name="title" class="input" required="required"/>
+        </div>
+      </div>
+
+      
+
+      <div class="field">
+        <label for="workday" class="label">Working day</label>
+        <div class="control">
+         <input type="text" name="workday" class="input" required="required"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="salary" class="label">Salary</label>
+        <div class="control">
+          <input type="text" name="salary" class="input" required="required"/>
+        </div>
+      </div>
+
+
+      <div class="field">
+        <label for="deadline" class="label">Deadline</label>
+        <div class="control">
+          <input type="date" name="deadline" class="input"/>
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button>Save</button>
+        </div>
+      </div>
+    </form>
+  
+  </body>
+</html>

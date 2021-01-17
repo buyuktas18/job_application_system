@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>JOBS</title>
+    <link rel="stylesheet" href="/static/form.css"/>
+  </head>
+  <body>
+    
+    <div class="forms">
+    <form autocomplete="off" class="form" action="login" method="post" name="adding_app">
+      <h1 class="title">Log in</h1>
+        <div class="field">
+          <label for="username" class="label">username</label>
+          <div class="control">
+           <input type="text" name="username" class="input" required="required"/>
+          </div>
+        </div>
+        
+        
+        
+        <div class="field">
+          <label for="password" class="label">password</label>
+          <div class="control">
+            <input type="password" name="password" class="input" required="required"/>
+          </div>
+        </div>
+
+        
+        
+    <div class="field is-grouped">
+          <div class="control">
+            <button type = "submit" name ="login" value="login">Log in</button>
+          </div>
+        </div>
+        <p style= color:brown>{{pass2}}</p>
+      </form>
+   
+
+      
+      
+      <form autocomplete="off" class="form" action="" method="post" name="adding_app">
+        <h1 class="title">Sign up</h1>
+        <div class="field">
+          <label for="usernamenew" class="label">choose a username</label>
+          <div class="control">
+           <input type="text" name="usernamenew" class="input" required="required"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="cname" class="label">company name</label>
+          <div class="control">
+           <input type="text" name="cname" class="input" required="required"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="cname" class="label">company phone</label>
+          <div class="control">
+           <input type="text" name="phone" class="input" required="required"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="cname" class="label">company mail</label>
+          <div class="control">
+           <input type="text" name="mail" class="input" required="required"/>
+          </div>
+        </div>
+        
+        
+        
+        <div class="field">
+          <label for="passwordnew" class="label">choose a password</label>
+          <div class="control">
+            <input type="password" name="passwordnew" class="input" required="required"/>
+          </div>
+        </div>
+
+        
+        
+    <div class="field is-grouped">
+          <div class="control">
+            <button type = "submit" name ="signin" value="signin">Sign in</button>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+
+
+
+
+  </body>
+</html>

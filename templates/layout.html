@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/jobs.css"/>
+  </head>
+  <body>
+    <ul>
+
+        <li><a href="/cprofile">Profile</a></li>
+        <li><a href = "/job_page">Create a new announcement</a></li>
+        <li><a href="/logout">Log out</a></li>
+        
+      </ul>
+    {% block content %}{% endblock %}
+
+    <footer>
+      <small>&copy; 2021, Deniz Büyüktaş</small>
+    </footer>
+  </body>
+</html>

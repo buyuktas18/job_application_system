@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>JOBS</title>
+    <link rel="stylesheet" href="/static/jobs.css"/>
+  </head>
+  <body>
+
+    <ul class="act">
+        <li><a class="active" href="/announcements">Announcements</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/logout">Log out</a></li>
+        <div class="search">
+          <form action="announcements" method = "POST">
+            <input type="text" placeholder="Search.." name="search">
+            <button type="submit" name="searchb" value = "searchb">Search</button>
+          </form>
+          
+        </div>
+        
+      </ul>
+
+    
+    
+
+
+
+    <div class="tables">
+    <div class="table1">
+
+     
+      <h1>Job Announccements</h1>
+
+
+
+
+    <table class="container">
+      <tr>
+        <th>Company</th>
+        <th>Job</th>
+      </tr>
+    {%for row in data%}
+        
+        <tr>
+            <td>
+                 {{row[0]}}  </a>
+            </td>
+            <td>
+              <a href="/annons?ann={{row[2]}}">{{row[1]}} </a>
+            </td>
+            <td class ="apply">
+                <form action="announcements" method="POST">
+                    <button type="submit" name="apply" value={{row[2]}}>Apply</button>
+                </form>
+            </td>
+        </tr>
+    
+    {%endfor%}
+    </table>
+  </div>
+
+    <div class="table2">
+    <h1>Company Scores</h1>
+
+    <table class="container">
+      <tr>
+        <th>Company</th>
+        <th>Score</th>
+      </tr>
+    {%for row in scores%}
+        
+        <tr>
+            <td>
+                 {{row[0]}}  </a>
+            </td>
+            <td>
+              <a>{{row[1]}} </a>
+            </td>
+        </tr>
+    
+    {%endfor%}
+    </table>
+  </div>
+</div>
+  </body>
+</html>

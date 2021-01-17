@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Profile</title>
+    <link rel="stylesheet" href="/static/jobs.css"/>
+  </head>
+  <body>
+    <a href="/announcements">Announcements</a>
+    <h1>Profile</h1>
+    <h2>{{title[0][0]}}</h2>
+    <div class="tables">
+        <table class="container">
+            <tr>
+              <th>Company</th>
+              <th>Job</th>
+              <th>Status</th>
+            </tr>
+          {%for row in data%}
+              
+              <tr>
+                  <td>
+                       {{row[0]}}  
+                  </td>
+                  <td>
+                    {{row[1]}}  
+                  </td>
+                  <td>
+                      {{row[2]}}
+                  </td>
+              </tr>
+          
+          {%endfor%}
+          </table>
+    </div>
+    
+
+    
+    
+    
+  </body>
+</html>
