@@ -370,4 +370,24 @@ def download():
     
     return send_file(BytesIO(cv), attachment_filename="cv.pdf", as_attachment=True)
 
+  
+@app.route("/clear", methods=['GET', 'POST'])
+def clear():
+    mycursor = mydb.cursor()
+    mycursor.execute("DELETE FROM announcements") 
+    mydb.commit()
+    mycursor.execute("DELETE FROM applicants") 
+    mydb.commit()
+    mycursor.execute("DELETE FROM companies") 
+    mydb.commit()
+    mycursor.execute("DELETE FROM applicant_accounts") 
+    mydb.commit()
+    mycursor.execute("DELETE FROM company_accounts") 
+    mydb.commit()
+    mycursor.execute("DELETE FROM users") 
+    mydb.commit()
+    mycursor.execute("DELETE FROM job_applications") 
+    mydb.commit()
+
+    return home_page()
 
