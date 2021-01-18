@@ -58,7 +58,7 @@ def confirm_page():
             check = 1
     if check == 0:
         sql = "INSERT INTO job_applications(applicant_id, announcement_id, status) VALUES (%s, %s, %s)"
-        val = (data, request.form['apply'], "WAITING")
+        val = (session['username'], request.form['apply'], "WAITING")
         mycursor.execute(sql, val)  
         mydb.commit()
         return render_template("confirm.html", message="Your application has been accepted")
