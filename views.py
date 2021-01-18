@@ -14,15 +14,15 @@ data = 0
   database="job_system"
 )"""
 
-mydb = psycopg2.connect(user="postgres",
+"""mydb = psycopg2.connect(user="postgres",
                                   password="jobsystem1234",
                                   host="127.0.0.1",
                                   port="5432",
-                                  database="job_system")
+                                  database="job_system")"""
 
-"""DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = os.environ['DATABASE_URL']
 
-mydb = psycopg2.connect(DATABASE_URL, sslmode='require')"""
+mydb = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 print(mydb)
 app = Flask(__name__)
@@ -370,5 +370,3 @@ def download():
     return send_file(BytesIO(cv), attachment_filename="cv.pdf", as_attachment=True)
 
 
-app.secret_key = 'super secret key'
-app.config['SESSION_TYPE'] = 'filesystem'
