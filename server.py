@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 import views
 
+app = Flask(__name__)
+
 def create_app():
     app = Flask(__name__)
     app.add_url_rule("/", view_func=views.home_page)
@@ -18,4 +20,6 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
     app.run(host="0.0.0.0", port=8000, debug=True)
