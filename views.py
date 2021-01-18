@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, url_for, redirect, send_file
+from flask import Flask, render_template, request, url_for, redirect, send_file, session
 from datetime import date
 from flask import json
 from io import BytesIO
 import os
-
 import psycopg2
 
 data = 0
@@ -15,15 +14,15 @@ data = 0
   database="job_system"
 )"""
 
-"""mydb = psycopg2.connect(user="postgres",
+mydb = psycopg2.connect(user="postgres",
                                   password="jobsystem1234",
                                   host="127.0.0.1",
                                   port="5432",
-                                  database="job_system")"""
+                                  database="job_system")
 
-DATABASE_URL = os.environ['DATABASE_URL']
+"""DATABASE_URL = os.environ['DATABASE_URL']
 
-mydb = psycopg2.connect(DATABASE_URL, sslmode='require')
+mydb = psycopg2.connect(DATABASE_URL, sslmode='require')"""
 
 print(mydb)
 app = Flask(__name__)
@@ -46,7 +45,7 @@ def confirm_page():
     mycursor = mydb.cursor()
     check = 0
     sql = "SELECT announcement_id FROM job_applications WHERE applicant_id = %s"
-    val = (data, )
+    val = (session['username'], )
     mycursor.execute(sql, val)
     checking = mycursor.fetchall()
     
@@ -92,6 +91,8 @@ def ans_page():
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
+    global data
+    data = 0
     return home_page()
 
 
@@ -99,7 +100,7 @@ def logout():
 def job_page():
     global data
     if request.method == "GET":
-        return render_template("job_page.html", var=data)
+        return render_template("job_page.html", var=session['username'])
     else:
         form_title = request.form["title"]
         deadline = request.form["deadline"]
@@ -108,11 +109,11 @@ def job_page():
 
         mycursor = mydb.cursor()
         sql = "INSERT INTO announcements(title, company_id, initial_date, deadline, working_day, salary) VALUES (%s, %s,%s,%s, %s,%s)"
-        val = (form_title,data , date.today(), deadline, working_day, salary)
+        val = (form_title,session['username'] , date.today(), deadline, working_day, salary)
         mycursor.execute(sql, val)
         mydb.commit()
         sql = "UPDATE companies SET score = score+10 WHERE company_id = %s"
-        val = (data, )
+        val = (session['username'], )
         mycursor.execute(sql, val)
         mydb.commit()
 
@@ -168,7 +169,7 @@ def login_page():
             mycursor.execute(sql2, val2)
             company = mycursor.fetchall()
             print(data)
-            data = (company[0][0])
+            session['username'] = company[0][0]
             return cprofile_page()
         else:
             form_username = request.form["username"]
@@ -187,7 +188,7 @@ def login_page():
                 company = mycursor.fetchall()
                 print("company")
                 print(company)
-                data = company[0][0]
+                session['username'] = company[0][0]
                 
                 return cprofile_page()
             else:
@@ -212,7 +213,7 @@ def cprofile_page():
         mycursor.execute(sql, val)
         mydb.commit()
         sql = "UPDATE companies SET score = score+5 WHERE company_id = %s"
-        val = (data, )
+        val = (session['username'], )
         mycursor.execute(sql, val)
         mydb.commit()
     if request.form.get("denied"):
@@ -224,14 +225,14 @@ def cprofile_page():
         mycursor.execute(sql, val)
         mydb.commit()
         sql = "UPDATE companies SET score = score+5 WHERE company_id = %s"
-        val = (data, )
+        val = (session['username'], )
         mycursor.execute(sql, val)
         mydb.commit()
 
     
     mycursor = mydb.cursor()
     sql = "SELECT COUNT(*) FROM announcements WHERE company_id=%s"
-    val = (data, )
+    val = (session['username'], )
     mycursor.execute(sql, val)
     myresult = mycursor.fetchall()
     sql = """
@@ -279,7 +280,7 @@ def profile_page():
     global data
     mycursor = mydb.cursor()
     sql = "SELECT name FROM applicants WHERE applicant_id=%s"
-    val = (data, )
+    val = (session['username'], )
     print(val)
     mycursor.execute(sql, val)
     my_result = mycursor.fetchall()
@@ -288,7 +289,7 @@ def profile_page():
     JOIN companies ON announcements.company_id = companies.company_id 
     JOIN job_applications ON announcements.announcement_id = job_applications.announcement_id
     WHERE job_applications.applicant_id = %s"""
-    val = (data, )
+    val = (session['username'], )
     mycursor.execute(sql, val)
     result = mycursor.fetchall()
     return render_template("profile.html", title = my_result, data = result)
@@ -334,7 +335,7 @@ def app_login_page():
             val2 = (myresult[0][0], )
             mycursor.execute(sql2, val2)
             company = mycursor.fetchall()
-            data = company[0][0]
+            session['username'] = company[0][0]
             return profile_page()
         else:
             form_username = request.form["username"]
@@ -348,7 +349,7 @@ def app_login_page():
                 val2 = (myresult[0][1], )
                 mycursor.execute(sql2, val2)
                 company = mycursor.fetchall()
-                data = company[0][0]
+                session['username'] = company[0][0]
                 
                 return profile_page()
             else:
@@ -369,4 +370,5 @@ def download():
     return send_file(BytesIO(cv), attachment_filename="cv.pdf", as_attachment=True)
 
 
-        
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
