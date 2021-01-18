@@ -94,8 +94,7 @@ def logout():
 
 @app.route("/job_page", methods=['GET', 'POST'])
 def job_page():
-    if len(data) < 1:
-        return login_page()
+    
     if request.method == "GET":
         return render_template("job_page.html", var=data[0])
     else:
