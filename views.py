@@ -3,7 +3,7 @@ from data import data
 from datetime import date
 from flask import json
 from io import BytesIO
-
+import os
 import psycopg2
 
 """mydb = mysql.connector.connect(
@@ -13,11 +13,16 @@ import psycopg2
   database="job_system"
 )"""
 
-mydb = psycopg2.connect(user="postgres",
+"""mydb = psycopg2.connect(user="postgres",
                                   password="jobsystem1234",
                                   host="127.0.0.1",
                                   port="5432",
                                   database="job_system")
+"""
+
+DATABASE_URL = os.environ['DATABASE_URL']
+
+mydb = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 print(mydb)
 app = Flask(__name__)
