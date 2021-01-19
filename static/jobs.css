@@ -136,6 +136,7 @@ transition-timing-function: line;
   
 
   .btn {
+    margin-top: 100px;
     margin-right: 100px;
     margin-left: 200px;
     text-decoration: none;
