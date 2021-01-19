@@ -14,6 +14,8 @@ mydb = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 print(mydb)
 app = Flask(__name__)
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
 
 @app.route("/", methods=['GET', 'POST'])
 def home_page():
