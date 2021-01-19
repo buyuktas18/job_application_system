@@ -330,7 +330,7 @@ def app_login_page():
             mycursor.execute(sql, val)
             myresult = mycursor.fetchall()
             if len(myresult) == 0:
-                return render_template("login.html", pass2 ="unsuccessfull login")
+                return render_template("app_login.html", pass2 ="unsuccessfull login")
             if myresult[0][0] == password:
                 sql2 = "SELECT applicant_id FROM applicants WHERE user_id=%s"
                 val2 = (myresult[0][1], )
