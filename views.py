@@ -7,18 +7,6 @@ import psycopg2
 
 data = 0
 
-"""mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="jobapplication1234",
-  database="job_system"
-)"""
-
-"""mydb = psycopg2.connect(user="postgres",
-                                  password="jobsystem1234",
-                                  host="127.0.0.1",
-                                  port="5432",
-                                  database="job_system")"""
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
@@ -26,7 +14,6 @@ mydb = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 print(mydb)
 app = Flask(__name__)
-app.secret_key = 'super secret key'
 
 @app.route("/", methods=['GET', 'POST'])
 def home_page():
@@ -67,7 +54,10 @@ def confirm_page():
 
 @app.route("/announcements", methods=['GET', 'POST'])
 def ans_page():
-    global data
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * from companies")
+    options = mycursor.fetchall()
+    print(options)
     if request.method == "GET":
         mycursor = mydb.cursor()
         mycursor.execute("SELECT companies.name, title, announcement_id FROM announcements JOIN companies ON announcements.company_id = companies.company_id")
@@ -75,7 +65,7 @@ def ans_page():
         mycursor.execute("SELECT name, score FROM companies ORDER BY SCORE DESC")
         
         scores = mycursor.fetchall()
-        return render_template("announcements.html", data = myresult, scores= scores)
+        return render_template("announcements.html", data = myresult, scores= scores, options = options)
     else:
         if request.form.get("searchb"):
             title = request.form['search']
@@ -86,7 +76,7 @@ def ans_page():
             myresult = mycursor.fetchall()
             mycursor.execute("SELECT name, score FROM companies ORDER BY SCORE DESC")
             scores = mycursor.fetchall()
-            return render_template("announcements.html", data = myresult, scores= scores)
+            return render_template("announcements.html", data = myresult, scores= scores, options = options)
         else:
             return confirm_page()
 
@@ -107,6 +97,13 @@ def job_page():
         deadline = request.form["deadline"]
         salary = request.form["salary"]
         working_day = request.form["workday"]
+        if working_day.isdigit() == False:
+            return render_template("job_page.html", error_message = "working day should be integer")
+        if int(working_day) > 7:
+            return render_template("job_page.html", error_message = "working day should be <= 7")
+        if salary.isdigit() == False:
+            return render_template("job_page.html", error_message = "salary should be integer")
+        
 
         mycursor = mydb.cursor()
         sql = "INSERT INTO announcements(title, company_id, initial_date, deadline, working_day, salary) VALUES (%s, %s,%s,%s, %s,%s)"
@@ -125,7 +122,7 @@ def job_page():
 def annons_page():
     form_title = request.args.get('ann')
     mycursor = mydb.cursor()
-    sql = "SELECT announcements.*, name FROM announcements JOIN companies ON announcements.company_id = companies.company_id WHERE announcement_id =%s"
+    sql = "SELECT announcements.*, name, description FROM announcements JOIN companies ON announcements.company_id = companies.company_id WHERE announcement_id =%s"
     val = (form_title, )
     mycursor.execute(sql, val)
     myresult = mycursor.fetchall()
@@ -143,7 +140,7 @@ def login_page():
         if request.form.get("signin"):
             new_username = request.form["usernamenew"]
             new_password = request.form["passwordnew"]
-            
+            desc = request.form["desc"]
             cname = request.form["cname"]
             mail = request.form["mail"]
             phone = request.form["phone"]
@@ -155,21 +152,14 @@ def login_page():
             val = (new_username,)
             mycursor.execute(sql, val)
             myresult = mycursor.fetchall()
-            sql = "INSERT INTO companies(name, score, email, phone, membership_date) VALUES (%s, %s, %s, %s, %s)"
-            val = (cname, 0, mail, phone, date.today())
+            sql = "INSERT INTO companies(name, score, email, phone, membership_date, user_id, description) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            val = (cname, 0, mail, phone, date.today(), myresult[0][0], desc)
             mycursor.execute(sql, val)
             mydb.commit()
-            mycursor.execute("SELECT company_id FROM companies ORDER BY company_id DESC")
-            comp_id = mycursor.fetchall()
-            sql_add = "INSERT INTO company_accounts(user_id, company_id) VALUES (%s, %s)"
-            val_add = (myresult[0][0], comp_id[0][0])
-            mycursor.execute(sql_add, val_add)
-            mydb.commit()
-            sql2 = "SELECT company_id FROM company_accounts WHERE user_id=%s"
+            sql2 = "SELECT company_id FROM companies WHERE user_id=%s"
             val2 = (myresult[0][0], )
             mycursor.execute(sql2, val2)
             company = mycursor.fetchall()
-            print(data)
             session['username'] = company[0][0]
             return cprofile_page()
         else:
@@ -183,12 +173,10 @@ def login_page():
                 return render_template("login.html", pass2 ="unsuccessfull login")
             
             if myresult[0][0] == password:
-                sql2 = "SELECT company_id FROM company_accounts WHERE user_id=%s"
+                sql2 = "SELECT company_id FROM companies WHERE user_id=%s"
                 val2 = (myresult[0][1], )
                 mycursor.execute(sql2, val2)
                 company = mycursor.fetchall()
-                print("company")
-                print(company)
                 session['username'] = company[0][0]
                 
                 return cprofile_page()
@@ -322,17 +310,11 @@ def app_login_page():
             val = (new_username,)
             mycursor.execute(sql, val)
             myresult = mycursor.fetchall()
-            sql = "INSERT INTO applicants(name, surname, email, phone, membership_date, cv) VALUES (%s, %s, %s, %s, %s, %s)"
-            val = (cname, surname, new_mail, new_phone, date.today(), cv.read())
+            sql = "INSERT INTO applicants(name, surname, email, phone, membership_date, cv, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            val = (cname, surname, new_mail, new_phone, date.today(), cv.read(), myresult[0][0])
             mycursor.execute(sql, val)
             mydb.commit()
-            mycursor.execute("SELECT applicant_id FROM applicants ORDER BY applicant_id DESC")
-            comp_id = mycursor.fetchall()
-            sql_add = "INSERT INTO applicant_accounts(user_id, applicant_id) VALUES (%s, %s)"
-            val_add = (myresult[0][0], comp_id[0][0])
-            mycursor.execute(sql_add, val_add)
-            mydb.commit()
-            sql2 = "SELECT applicant_id FROM applicant_accounts WHERE user_id=%s"
+            sql2 = "SELECT applicant_id FROM applicants WHERE user_id=%s"
             val2 = (myresult[0][0], )
             mycursor.execute(sql2, val2)
             company = mycursor.fetchall()
@@ -345,8 +327,10 @@ def app_login_page():
             val = (form_username,)
             mycursor.execute(sql, val)
             myresult = mycursor.fetchall()
+            if len(myresult) == 0:
+                return render_template("login.html", pass2 ="unsuccessfull login")
             if myresult[0][0] == password:
-                sql2 = "SELECT applicant_id FROM applicant_accounts WHERE user_id=%s"
+                sql2 = "SELECT applicant_id FROM applicants WHERE user_id=%s"
                 val2 = (myresult[0][1], )
                 mycursor.execute(sql2, val2)
                 company = mycursor.fetchall()
@@ -370,7 +354,7 @@ def download():
     
     return send_file(BytesIO(cv), attachment_filename="cv.pdf", as_attachment=True)
 
-  
+
 @app.route("/clear", methods=['GET', 'POST'])
 def clear():
     mycursor = mydb.cursor()
@@ -378,11 +362,7 @@ def clear():
     mydb.commit()
     mycursor.execute("DELETE FROM applicants") 
     mydb.commit()
-    mycursor.execute("DELETE FROM companies") 
-    mydb.commit()
-    mycursor.execute("DELETE FROM applicant_accounts") 
-    mydb.commit()
-    mycursor.execute("DELETE FROM company_accounts") 
+    mycursor.execute("DELETE FROM companies")   
     mydb.commit()
     mycursor.execute("DELETE FROM users") 
     mydb.commit()
@@ -390,4 +370,62 @@ def clear():
     mydb.commit()
 
     return home_page()
+    
+@app.route("/delete", methods=['GET', 'POST'])
+def delete():
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT user_id FROM companies WHERE company_id = %s", (session['username'], ))
+    my_result = mycursor.fetchall()
+    mycursor.execute("DELETE FROM users WHERE user_id = %s", (my_result[0][0], ))
+    mydb.commit()
+    
+
+    return home_page()
+
+
+@app.route("/app_delete", methods=['GET', 'POST'])
+def app_delete():
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT user_id FROM applicants WHERE applicant_id = %s", (session['username'], ))
+    my_result = mycursor.fetchall()
+    mycursor.execute("DELETE FROM users WHERE user_id = %s", (my_result[0][0], ))
+    mydb.commit()
+    
+
+    return home_page()
+
+
+
+@app.route("/alter", methods=['GET', 'POST'])
+def alter():
+    mycursor = mydb.cursor()
+    mycursor.execute("""ALTER TABLE announcements
+DROP CONSTRAINT announcements_company_id_fkey;""")
+
+    mydb.commit()
+    
+
+    return home_page()
+
+@app.route("/filter", methods=['GET', 'POST'])
+def filter():
+    comp = request.form.get("comp")
+    salary = request.form["salary"]
+    working = request.form["options"]
+    mycursor = mydb.cursor()
+    mycursor.execute("""SELECT companies.name, title, announcement_id 
+    FROM announcements JOIN companies ON announcements.company_id = companies.company_id
+    WHERE announcements.company_id = %s AND working_day = %s AND salary > %s""", (comp, working ,salary))
+    myresult = mycursor.fetchall()
+    mycursor.execute("SELECT name, score FROM companies ORDER BY SCORE DESC")
+    scores = mycursor.fetchall()
+    mycursor.execute("SELECT * from companies")
+    options = mycursor.fetchall()
+
+
+
+    return render_template("announcements.html", data = myresult, scores= scores, options = options)
+
+    
+
 
