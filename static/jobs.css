@@ -199,7 +199,8 @@ transition-timing-function: line;
       margin: auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 30%;
+      width: 15%;
+      color:coral;
     }
     
     /* The Close Button */
@@ -224,6 +225,7 @@ transition-timing-function: line;
 
 .search{
   float:right;
+  display:flex;
 }
 
 .search input[type=text] {
