@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <title>JOBS</title>
     <link rel="stylesheet" href="/static/jobs.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
 
@@ -11,13 +12,20 @@
         <li><a class="active" href="/announcements">Announcements</a></li>
         <li><a href="/profile">Profile</a></li>
         <li><a href="/logout">Log out</a></li>
+        
         <div class="search">
-          <form action="announcements" method = "POST">
-            <input type="text" placeholder="Search.." name="search">
-            <button type="submit" name="searchb" value = "searchb">Search</button>
-          </form>
           
+          <form action="announcements" method = "POST">
+            
+            <input type="text" placeholder="Search.." name="search">
+            
+            
+            <button type="submit" name="searchb" value = "searchb"><i class="fa fa-search"></i></button>
+          </form>
+          <li><button onclick="reply()"><i class="fa fa-filter"></i></button></li>
         </div>
+      
+        
         
       </ul>
 
@@ -30,7 +38,7 @@
     <div class="table1">
 
      
-      <h1>Job Announccements</h1>
+      <h1>Job Announcements</h1>
 
 
 
@@ -47,13 +55,14 @@
                  {{row[0]}}  </a>
             </td>
             <td>
-              <a href="/annons?ann={{row[2]}}">{{row[1]}} </a>
+              <a href="/announcement?ann={{row[2]}}">{{row[1]}} </a>
             </td>
             <td class ="apply">
                 <form action="announcements" method="POST">
                     <button type="submit" name="apply" value={{row[2]}}>Apply</button>
                 </form>
             </td>
+            
         </tr>
     
     {%endfor%}
@@ -83,5 +92,71 @@
     </table>
   </div>
 </div>
+
+
+
+<div id="modal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    
+    <p>Filter your search</p>
+    <form action="filter", method = "POST">
+      <label>Choose a company</label><br>
+      <select name="comp", id="comp">
+     
+        {%set i = 0%}
+        {%for row in options%}
+        <option value="{{row[i]}}">
+          {{row[1]}}
+        </option>
+        {%set i = i + 1%}
+        {%endfor%}
+      </select>
+      
+      <br>
+      <label>Enter the working day (0-7)</label><br>
+      <input type="radio" name="options" id="option1" value="1"> 1 </input><br>
+      <input type="radio" name="options" id="option2" value="2"> 2 </input><br>
+      <input type="radio" name="options" id="option3" value="3"> 3 </input><br>
+      <input type="radio" name="options" id="option1" value="4"> 4 </input><br>
+      <input type="radio" name="options" id="option2" value="5"> 5 </input><br>
+      <input type="radio" name="options" id="option3" value="6"> 6 </input><br>
+      <input type="radio" name="options" id="option1" value="7"> 7 </input><br>
+      
+      <br>
+      <label>Enter the salary lower bound</label><br>
+      <input name="salary" type="text" value="lower bound for salary">
+      <br>
+      <button type = "submit" value="filter">Filter</button>
+
+      
+
+    </form>
+    
+</div>
+
+</div>
+
+<script>
+ 
+   
+  function reply(){
+
+      var modal = document.getElementById("modal");
+      modal.style.display = "block";
+      var span = document.getElementsByClassName("close")[0];
+      span.onclick = function() {
+     modal.style.display = "none";
+   }
+  }
+   
+   
+   </script>
+
+
+
+
   </body>
 </html>

@@ -22,7 +22,7 @@
       {%if data1[orders[k] + i][0] != "0"%}
       <tr>
           <td>
-          {{data1[orders[k] + i][0] + " " + data1[orders[k] + i][3]}}
+          {{data1[orders[k] + i][0]}}  {{data1[orders[k] + i][3]}}
           </td>
           <td>
             <form action="download" method="POST">
@@ -74,6 +74,11 @@
 </div>
 {%endfor%}
 
+<form action="delete", method="POST">
+    <button>
+        DELETE THIS ACCOUNT
+    </button>
+</form>
 
 <script>
    var id = 0;
@@ -103,4 +108,5 @@
     
     </script>
    
+
 {% endblock %}
